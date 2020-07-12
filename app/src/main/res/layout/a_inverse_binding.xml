@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="backgroud"
+            type="com.aos.app.ui.inverse.Backgroud" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+<!--            <TextView-->
+<!--                android:id="@+id/tvInverseBg"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:background="@drawable/level_bank_detail_top_bg"-->
+<!--                android:gravity="center"-->
+<!--                android:onClick="@{backgroud::viewClick}"-->
+<!--                android:text="@={backgroud.inverseStr}"-->
+<!--                android:textColor="#FFFFFF"-->
+<!--                app:backgroundLevel="@{backgroud.backgroundLevel}"-->
+<!--                tools:text="我的文字内容支持双向绑定\n点击切换背景色和文字内容" />-->
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:text="@{backgroud.inverseStr}"-->
+<!--                android:textColor="@android:color/holo_blue_light"-->
+<!--                android:textSize="20dp" />-->
+
+            <TextView
+                android:id="@+id/tvInverseBg"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/level_bank_detail_top_bg"
+                android:gravity="center"
+                app:viewClick="@{backgroud::viewClick}"
+                android:text="@={backgroud.inverseStr}"
+                android:textColor="#FFFFFF"
+                app:cbackgroudLevel="@={backgroud.backgroundLevel}"
+                tools:text="我的文字内容支持双向绑定\n点击切换背景色和文字内容" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="@{`背景色Level = ` + String.valueOf(backgroud.backgroundLevel)}"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="20dp" />
+
+
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <!--银行卡背景色-->
+    <color name="color_bankcard_bg_0">#FF5AA6A6</color>
+    <color name="color_bankcard_bg_1">#FF5C8FD8</color>
+    <color name="color_bankcard_bg_2">#FF034D4D</color>
+    <color name="color_bankcard_bg_3">#FFEC4000</color>
+    <color name="color_bankcard_bg_4">#FFED9217</color>
+</resources>

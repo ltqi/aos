@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.aos.app.ui.origin.OriginViewModel" />
+
+        <variable
+            name="user"
+            type="com.aos.app.ui.origin.User" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_coroutines"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="20dp"
+        android:paddingTop="25dp">
+
+<!--        <TextView-->
+<!--            android:id="@+id/tvUser"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="50dp"-->
+<!--            android:textSize="30dp"-->
+<!--            tools:text="我是大王"-->
+<!--            android:text="@{viewModel.users.get(0).toString}"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+<!--        &lt;!&ndash;        android:text="@{user.name}"&ndash;&gt;-->
+<!--        &lt;!&ndash;        android:text="@{viewModel.users.get(0).name}"&ndash;&gt;-->
+
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:onClick="@{viewModel::update}"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            text="@{user.name + ` 年龄：` + user.age}" />-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

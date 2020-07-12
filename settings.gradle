@@ -1,0 +1,6 @@
+include ':app2'//include ':app2'
+include ':app'
+rootProject.name='AppMvvm'
+//include ':liba'
+include ':liba'
+println("settings==============================")
