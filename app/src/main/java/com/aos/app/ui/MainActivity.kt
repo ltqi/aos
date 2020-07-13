@@ -13,9 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import com.aos.app.R
 import com.aos.app.getVm
+import com.aos.app.net.ApiAuthService
 import com.aos.app.ui.base.MvvmActivity
 import com.aos.app.ui.main.MainFragViewModel
 import com.aos.app.ui.main.MainFragment
+import com.q.net.ARetrofit
 
 class MainActivity : MvvmActivity<ViewDataBinding>() {
 
@@ -31,7 +33,9 @@ class MainActivity : MvvmActivity<ViewDataBinding>() {
 
 
 //        MainFragViewModel::class.java.getVm(this)
-        this[MainFragViewModel::class.java].content
+//        this[MainFragViewModel::class.java].content
+
+
 
     }
 
