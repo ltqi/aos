@@ -1,7 +1,7 @@
 package com.aos.app.net
 
-import com.aos.app.dto.UserInfo
-import com.aos.app.dto.WanResponse
+import com.aos.app.dto.AResponse
+import com.aos.app.ui.login.data.model.UserInfo
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -20,14 +20,14 @@ interface ApiAuthService {
 
     @FormUrlEncoded
     @POST("/user/login")
-    suspend fun login(@Field("username") userName: String, @Field("password") passWord: String): WanResponse<UserInfo>
+    suspend fun login(@Field("username") userName: String, @Field("password") passWord: String): AResponse<UserInfo?>
 
     @GET("/user/logout/json")
-    suspend fun logOut(): WanResponse<Any>
+    suspend fun logout(): AResponse<Any>
 
     @FormUrlEncoded
     @POST("/user/register")
-    suspend fun register(@Field("username") userName: String, @Field("password") passWord: String, @Field("repassword") rePassWord: String): WanResponse<UserInfo>
+    suspend fun register(@Field("username") userName: String, @Field("password") passWord: String, @Field("repassword") rePassWord: String): AResponse<UserInfo>
 
 
 }

@@ -15,8 +15,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
+import androidx.lifecycle.lifecycleScope
 import com.aos.app.kt.show
 import com.aos.app.ut.ADialogFragment
+import kotlinx.coroutines.launch
 import java.lang.reflect.ParameterizedType
 
 abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultViewModelProviderFactory*/ {
@@ -30,9 +32,7 @@ abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultView
             val tClass = actualTypeArguments[0] as? Class<VB>
             if (tClass != null && tClass != ViewDataBinding::class.java) {
                 viewDataBinding = DataBindingUtil.inflate(inflater, getLayout(), container, false)
-                if (isVDBInit()) {
-                    viewDataBinding.lifecycleOwner = this
-                }
+                viewDataBinding.lifecycleOwner = this
                 viewModelProvider = ViewModelProvider(this)
                 return viewDataBinding.root
             }
@@ -143,6 +143,16 @@ abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultView
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 //        viewModel.onActivityResult.value = mutableMapOf(Pair("requestCode", requestCode), Pair("resultCode", resultCode), Pair("data", data))
+    }
+
+    fun launch(block: suspend () -> Unit) = lifecycleScope.launch {
+        try {
+            showLoading()
+            block()
+            dismissLoading()
+        } catch (e: java.lang.Exception) {
+            dismissLoading()
+        }
     }
 
     private val dialogLoading by lazy { ADialogFragment() }

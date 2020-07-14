@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MainFragViewModel(application: Application) : BaseViewModel(application) {
+class MainFragViewModel : BaseViewModel() {
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {}
 

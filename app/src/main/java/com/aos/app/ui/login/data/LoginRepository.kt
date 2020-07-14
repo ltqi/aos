@@ -1,51 +1,44 @@
 package com.aos.app.ui.login.data
 
+import com.aos.app.dto.AResponse
 import com.aos.app.net.ApiAuthService
-import com.aos.app.ui.login.data.model.LoggedInUser
-import com.q.net.ARetrofit
+import com.aos.app.ui.login.data.model.UserInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import java.io.IOException
 
-/**
- * Class that requests authentication and user information from the remote data source and
- * maintains an in-memory cache of login status and user credentials information.
- */
 
-class LoginRepository(val dataSource: LoginDataSource) {
+class LoginRepository(private val authService: ApiAuthService) {
 
-    // in-memory cache of the loggedInUser object
-    var user: LoggedInUser? = null
+    var user: UserInfo? = null
         private set
 
     val isLoggedIn: Boolean
         get() = user != null
 
-    init {
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
+    suspend fun logout() {
         user = null
+        authService.logout()
     }
 
-    fun logout() {
-        user = null
-        dataSource.logout()
-    }
-
-    fun login(username: String, password: String): Result<LoggedInUser> {
-
-//        ARetrofit.getApiService<ApiAuthService>().login("","")
-
+    suspend fun login(username: String, password: String): AResult<UserInfo?> {
         // handle login
-        val result = dataSource.login(username, password)
-
-        if (result is Result.Success) {
-            setLoggedInUser(result.data)
-        }
-
-        return result
+        val result = authService.login(username, password)
+        return handleResponse(result, {
+            user = result.data
+        })
     }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
-        this.user = loggedInUser
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
+    suspend fun <T : Any> handleResponse(response: AResponse<T?>, successBlock: (suspend CoroutineScope.() -> Unit)? = null,
+                                          errorBlock: (suspend CoroutineScope.() -> Unit)? = null): AResult<T?> {
+        return coroutineScope {
+            if (response.errorCode == -1) {
+                errorBlock?.let { it() }
+                AResult.Error(IOException(response.errorMsg))
+            } else {//wanandroid中 errorCode == 0 表示返回正确的数据
+                successBlock?.let { it() }
+                AResult.Success(response.data)
+            }
+        }
     }
 }

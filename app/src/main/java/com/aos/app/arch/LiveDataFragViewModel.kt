@@ -5,7 +5,7 @@ import android.view.View
 import androidx.lifecycle.*
 import com.aos.app.ui.base.BaseViewModel
 
-class LiveDataFragViewModel(application: Application) : BaseViewModel(application) {
+class LiveDataFragViewModel : BaseViewModel() {
 
     val postalCode1 = liveData<String> {
 //        getPostalCode1("1") // no suspend

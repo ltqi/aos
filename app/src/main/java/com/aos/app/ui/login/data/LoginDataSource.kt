@@ -1,6 +1,6 @@
 package com.aos.app.ui.login.data
 
-import com.aos.app.ui.login.data.model.LoggedInUser
+import com.aos.app.ui.login.data.model.UserInfo
 import java.io.IOException
 import java.util.*
 
@@ -9,17 +9,16 @@ import java.util.*
  */
 class LoginDataSource {
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
-        try {
-            // TODO: handle loggedInUser authentication
-            val fakeUser = LoggedInUser(UUID.randomUUID().toString(), "Jane Doe")
-            return Result.Success(fakeUser)
-        } catch (e: Throwable) {
-            return Result.Error(IOException("Error logging in", e))
-        }
-    }
-
-    fun logout() {
-        // TODO: revoke authentication
-    }
+//    fun login(username: String, password: String): AResult<UserInfo> {
+//        try {
+//            val fakeUser = UserInfo(UUID.randomUUID().toString(), "Jane Doe")
+//            return AResult.Success(fakeUser)
+//        } catch (e: Throwable) {
+//            return AResult.Error(IOException("Error logging in", e))
+//        }
+//    }
+//
+//    fun logout() {
+//        // TODO: revoke authentication
+//    }
 }

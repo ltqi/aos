@@ -6,7 +6,7 @@ import androidx.lifecycle.*
 import com.aos.app.ui.base.BaseViewModel
 import kotlinx.coroutines.*
 
-class CoroutinesFragViewModel(application: Application) : BaseViewModel(application) {
+class CoroutinesFragViewModel : BaseViewModel() {
 
 //    val noteDeferred = CompletableDeferred<Book>()
 

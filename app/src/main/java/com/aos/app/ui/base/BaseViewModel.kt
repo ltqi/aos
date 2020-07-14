@@ -1,6 +1,5 @@
 package com.aos.app.ui.base
 
-import android.app.Application
 import android.content.Intent
 import android.util.Log
 import androidx.annotation.MainThread
@@ -9,10 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.aos.app.ui.main.VmLifecycleObserver
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application), VmLifecycleObserver {
+open class BaseViewModel : ViewModel(), VmLifecycleObserver {
+
+    open class UiState<T>(
+        val isLoading: Boolean = false,
+        val isRefresh: Boolean = false,
+        val isSuccess: T? = null,
+        val isError: String? = null
+    )
 
     val activity = MutableLiveData<FragmentActivity>()
     val viewModelProvider = MutableLiveData<ViewModelProvider>()
@@ -52,7 +58,11 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
             onNewIntent(it)
         })
         onActivityResult.observe(owner, Observer {
-            onActivityResult(it["requestCode"] as? Int, it["resultCode"] as? Int, it["data"] as? Intent)
+            onActivityResult(
+                it["requestCode"] as? Int,
+                it["resultCode"] as? Int,
+                it["data"] as? Intent
+            )
         })
 
     }
@@ -62,7 +72,7 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         return viewModelProvider.value?.get(modelClass)
     }
 
-    open fun onRestart(){}
+    open fun onRestart() {}
     open fun onNewIntent(intent: Intent) {}
     open fun onActivityResult(requestCode: Int?, resultCode: Int?, data: Intent?) {}
 
@@ -98,14 +108,15 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         Log.e("ViewModel impl use in" + owner?.javaClass?.simpleName, msg)
     }
 
-    fun launch(block: suspend () -> Unit) = viewModelScope.launch {
-        try {
-            showLoading.value = true
-            block()
-            showLoading.value = false
-        } catch (e: Exception) {
-            showLoading.value = false
+    fun launchUI(block: suspend CoroutineScope.() -> Unit, isShowLoading: Boolean = true) =
+        viewModelScope.launch {
+            try {
+                if (isShowLoading) showLoading.value = true
+                block()
+                showLoading.value = false
+            } catch (e: Exception) {
+                showLoading.value = false
+            }
         }
-    }
 }
 

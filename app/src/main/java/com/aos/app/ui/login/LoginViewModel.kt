@@ -1,32 +1,46 @@
 package com.aos.app.ui.login
 
+import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import android.util.Patterns
-import com.aos.app.ui.login.data.Result
+import androidx.lifecycle.viewModelScope
 import com.aos.app.R
+import com.aos.app.ui.base.BaseViewModel
 import com.aos.app.ui.login.data.LoginRepository
+import com.aos.app.ui.login.data.checkResult
+import com.aos.app.ui.login.data.model.UserInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val loginRepository: LoginRepository) : BaseViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
-    private val _loginResult = MutableLiveData<LoginResult>()
-    val loginResult: LiveData<LoginResult> = _loginResult
+    private val _loginResult = MutableLiveData<LoginUiState<UserInfo?>>()
+    val loginResult: LiveData<LoginUiState<UserInfo?>> = _loginResult
 
     fun login(username: String, password: String) {
-        // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
-
-        if (result is Result.Success) {
-            _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+        viewModelScope.launch {
+            _loginResult.value = LoginUiState(true)
+            val loginRet = loginRepository.login(username, password)
+            loginRet.checkResult(onSuccess = {
+                _loginResult.value = LoginUiState(isSuccess = it, enableLoginButton = true)
+            }, onError = {
+                _loginResult.value = LoginUiState(isError = it, enableLoginButton = true)
+            })
         }
     }
+
+    suspend fun loginIO(username: String, password: String) = withContext(Dispatchers.IO) {
+        // can be launched in a separate asynchronous job
+//        val result = loginRepository.login(username, password)
+
+//        ARetrofit.getApiService<ApiAuthService>().login(username, password)
+    }
+
 
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
@@ -52,3 +66,11 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         return password.length > 5
     }
 }
+
+class LoginUiState<T>(
+    isLoading: Boolean = false,
+    isSuccess: T? = null,
+    isError: String? = null,
+    val enableLoginButton: Boolean = false,
+    val needLogin: Boolean = false
+) : BaseViewModel.UiState<T>(isLoading, false, isSuccess, isError)

@@ -31,11 +31,8 @@ class MainActivity : MvvmActivity<ViewDataBinding>() {
                     .commitNow()
         }
 
-
 //        MainFragViewModel::class.java.getVm(this)
 //        this[MainFragViewModel::class.java].content
-
-
 
     }
 

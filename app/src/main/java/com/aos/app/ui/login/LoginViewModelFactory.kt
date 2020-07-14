@@ -2,8 +2,10 @@ package com.aos.app.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.aos.app.net.ApiAuthService
 import com.aos.app.ui.login.data.LoginDataSource
 import com.aos.app.ui.login.data.LoginRepository
+import com.q.net.ARetrofit
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
@@ -16,7 +18,7 @@ class LoginViewModelFactory : ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             return LoginViewModel(
                     loginRepository = LoginRepository(
-                            dataSource = LoginDataSource()
+                        authService = ARetrofit.getApiService()
                     )
             ) as T
         }
