@@ -19,7 +19,7 @@ class ADialogFragment(var layoutResId: Int = R.layout.d_loading, var dataBinding
     var viewDataBinding: ViewDataBinding? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return if (dataBinding) {
-            viewDataBinding = DataBindingUtil.inflate<ViewDataBinding>(layoutInflater, layoutResId, null, false)
+            viewDataBinding = DataBindingUtil.inflate(layoutInflater, layoutResId, null, false)
             viewDataBinding?.root
         } else {
             inflater.inflate(layoutResId, null)

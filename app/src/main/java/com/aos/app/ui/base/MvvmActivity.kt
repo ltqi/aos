@@ -100,7 +100,7 @@ abstract class MvvmActivity<B : ViewDataBinding> : AppCompatActivity() {
 //        viewModel.onActivityResult.value = mutableMapOf(Pair("requestCode", requestCode), Pair("resultCode", resultCode), Pair("data", data))
     }
 
-    val dialogLoading by lazy { ADialogFragment() }
+    private val dialogLoading by lazy { ADialogFragment() }
     fun showLoading(){
         show("开始加载数据")
         dialogLoading.show(supportFragmentManager, "loading")

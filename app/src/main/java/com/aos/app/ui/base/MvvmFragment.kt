@@ -1,6 +1,5 @@
 package com.aos.app.ui.base
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,16 +12,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.aos.app.kt.show
-import com.aos.app.mainHandler
+import com.aos.app.ut.ADialogFragment
 import java.lang.reflect.ParameterizedType
 
 abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultViewModelProviderFactory*/ {
 
-    protected lateinit var viewModelProvider : ViewModelProvider
-    protected lateinit var viewDataBinding : VB
+    protected lateinit var viewModelProvider: ViewModelProvider
+    protected lateinit var viewDataBinding: VB
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val actualTypeArguments = (javaClass.genericSuperclass as? ParameterizedType)?.actualTypeArguments
@@ -41,7 +41,7 @@ abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultView
     }
 
     @LayoutRes
-    abstract fun getLayout() : Int
+    abstract fun getLayout(): Int
 
     fun isVDBInit() = this::viewDataBinding.isInitialized
 
@@ -66,7 +66,7 @@ abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultView
 //        return viewModelProvider.get(modelClass)
     }
 
-    inline fun  <reified VM : BaseViewModel>  initViewModel(variableId: Int): VM {
+    inline fun <reified VM : BaseViewModel> initViewModel(variableId: Int): VM {
         if (!isVDBInit()) {
             throw Exception("未使用MVVM")
         }
@@ -77,7 +77,7 @@ abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultView
             lifecycle.addObserver(this)
             viewDataBinding.setVariable(variableId, this)
             showLoading.observe(this@MvvmFragment, Observer {
-                when(it) {
+                when (it) {
                     true -> showLoading()
                     false -> dismissLoading()
                 }
@@ -145,19 +145,14 @@ abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultView
 //        viewModel.onActivityResult.value = mutableMapOf(Pair("requestCode", requestCode), Pair("resultCode", resultCode), Pair("data", data))
     }
 
-    var pd: ProgressDialog? = null
-    fun showLoading(){
-        mainHandler.post {
-            pd = ProgressDialog(requireActivity())
-            pd?.show()
-            show("开始加载数据")
-        }
+    private val dialogLoading by lazy { ADialogFragment() }
+    fun showLoading() {
+        show("开始加载数据")
+        dialogLoading.show(requireActivity().supportFragmentManager, "loading")
     }
 
-    fun dismissLoading(){
-        mainHandler.post {
-            pd?.dismiss()
-            show("加载数据结束")
-        }
+    fun dismissLoading() {
+        show("加载数据结束")
+        dialogLoading.dismiss()
     }
 }
