@@ -5,10 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.aos.app.R
+import com.aos.app.net.mk.UserData
+import com.aos.app.net.mk.doResult
 import com.aos.app.ui.base.BaseViewModel
 import com.aos.app.ui.login.data.LoginRepository
-import com.aos.app.ui.login.data.checkResult
-import com.aos.app.ui.login.data.model.UserInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,19 +19,33 @@ class LoginViewModel(private val loginRepository: LoginRepository) : BaseViewMod
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
-    private val _loginResult = MutableLiveData<LoginUiState<UserInfo?>>()
-    val loginResult: LiveData<LoginUiState<UserInfo?>> = _loginResult
+//    private val _loginResult = MutableLiveData<LoginUiState<UserInfo?>>()
+//    val loginResult: LiveData<LoginUiState<UserInfo?>> = _loginResult
+
+    private val _loginResult = MutableLiveData<LoginUiState<UserData?>>()
+    val loginResult: LiveData<LoginUiState<UserData?>> = _loginResult
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _loginResult.value = LoginUiState(true)
-            val loginRet = loginRepository.login(username, password)
-            loginRet.checkResult(onSuccess = {
-                _loginResult.value = LoginUiState(isSuccess = it, enableLoginButton = true)
-            }, onError = {
-                _loginResult.value = LoginUiState(isError = it, enableLoginButton = true)
-            })
+//            val loginRet = loginRepository.login(username, password)
+//            loginRet.checkResult(onSuccess = {
+//                _loginResult.value = LoginUiState(isSuccess = it, enableLoginButton = true)
+//            }, onError = {
+//                _loginResult.value = LoginUiState(isError = it, enableLoginButton = true)
+//            })
         }
+    }
+
+    fun loginMK(account: String, password: String) {
+        launchUI({
+            val loginRet = loginRepository.loginMK(account, password)
+            loginRet.doResult(onSuccess = {
+                _loginResult.value = LoginUiState(isSuccess = it, enableLoginButton = true)
+            }, onError = { msg, e ->
+                _loginResult.value = LoginUiState(isError = msg, enableLoginButton = true)
+            })
+        })
     }
 
     suspend fun loginIO(username: String, password: String) = withContext(Dispatchers.IO) {

@@ -1,6 +1,8 @@
 package com.aos.app
 
 import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
@@ -23,11 +25,13 @@ class App : Application() {
 
     companion object {
         lateinit var application: Application
+        lateinit var sp: SharedPreferences
     }
 
     override fun onCreate() {
         super.onCreate()
         application = this
+        sp = getSharedPreferences(packageName, Context.MODE_PRIVATE)
     }
 }
 

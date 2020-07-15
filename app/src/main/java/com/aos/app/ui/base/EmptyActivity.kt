@@ -2,7 +2,6 @@ package com.aos.app.ui.base
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MediatorLiveData
 import com.aos.app.R
 
 /**
@@ -10,7 +9,7 @@ import com.aos.app.R
  * email     :  qiliantao@mockuai.com
  * Describe  :
  */
-class EmptyActivity : AppCompatActivity(){
+class EmptyActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

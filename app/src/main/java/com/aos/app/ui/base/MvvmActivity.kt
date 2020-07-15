@@ -2,7 +2,6 @@ package com.aos.app.ui.base
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.MainThread
@@ -10,9 +9,7 @@ import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.*
-import com.aos.app.kt.show
 import com.aos.app.ut.ADialogFragment
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -120,5 +117,6 @@ abstract class MvvmActivity<B : ViewDataBinding> : AppCompatActivity() {
             dismissLoading()
         }
     }
+
 
 }

@@ -1,7 +1,7 @@
 package com.aos.app.ui.login.data
 
 
-sealed class AResult<out T : Any?> {
+sealed class AResult<out T : Any?>(var code: String = "", var msg: String = "") {
 
     data class Success<out T : Any>(val data: T?) : AResult<T>()
     data class Error(val exception: Exception) : AResult<Nothing>()

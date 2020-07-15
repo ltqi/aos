@@ -1,5 +1,7 @@
 package com.q.net
 
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import com.q.lib.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -21,8 +23,7 @@ abstract class BaseRetrofitClient {
         const val READ_TIMEOUT = CONNECT_TIMEOUT
     }
 
-//    @Singleton
-    val client: OkHttpClient
+    protected val client: OkHttpClient
         get() {
             val builder = OkHttpClient.Builder()
             val logging = HttpLoggingInterceptor()
@@ -37,12 +38,12 @@ abstract class BaseRetrofitClient {
             return builder.build()
         }
 
-    abstract fun builderOkHttpClient(builder: OkHttpClient.Builder)
+    protected abstract fun builderOkHttpClient(builder: OkHttpClient.Builder)
 
     inline fun <reified T> getApiService(baseUrl: String = HOST_S): T {
         return Retrofit.Builder()
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GSON))
 //                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
             .baseUrl(baseUrl).apply {
@@ -51,7 +52,19 @@ abstract class BaseRetrofitClient {
             .build().create(T::class.java)
     }
 
-    abstract fun builderRetrofit(builder: Retrofit.Builder)
+    protected abstract fun builderRetrofit(builder: Retrofit.Builder)
 
 
+}
+
+val GSON = GsonBuilder()
+    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+    .serializeSpecialFloatingPointValues()
+    .disableHtmlEscaping()
+    .create()
+
+object RequestMethod {
+    const val GET = "GET"
+    const val POST = "POST"
+    const val PUT = "PUT"
 }

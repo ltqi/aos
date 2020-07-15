@@ -1,15 +1,10 @@
 package com.aos.app.ui.main
 
-import android.app.Application
 import android.content.Intent
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.Observable
 import androidx.databinding.ObservableField
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import com.aos.app.kt.show
 import com.aos.app.ui.base.*
 import com.aos.app.ui.inverse.InverseBindingActivity
 import com.aos.app.ui.coroutines.CoroutinesActivity

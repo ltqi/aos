@@ -16,7 +16,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import androidx.lifecycle.lifecycleScope
-import com.aos.app.kt.show
 import com.aos.app.ut.ADialogFragment
 import kotlinx.coroutines.launch
 import java.lang.reflect.ParameterizedType

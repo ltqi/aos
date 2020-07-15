@@ -2,19 +2,11 @@ package com.aos.app.ui.main
 
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.createViewModelLazy
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.get
 import com.aos.app.BR
 import com.aos.app.R
 import com.aos.app.databinding.FMainBinding
-import com.aos.app.getVm
-import com.aos.app.kt.show
 import com.aos.app.ui.base.MvvmFragment
 import kotlinx.android.synthetic.main.f_main.*
 import org.greenrobot.eventbus.EventBus

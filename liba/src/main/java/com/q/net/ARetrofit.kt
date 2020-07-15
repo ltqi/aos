@@ -1,10 +1,10 @@
 package com.q.net
 
 import com.q.lib.BuildConfig
+import com.q.net.okhttp.percentDecode
 import com.q.util.body2String
 import com.q.util.formatJson
 import com.q.util.i
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okio.Buffer
 import retrofit2.Retrofit
@@ -14,7 +14,7 @@ import retrofit2.Retrofit
  * email     :  qiliantao@mockuai.com
  * Describe  :  Retrofit okHttpClient封装
  */
-object ARetrofit : BaseRetrofitClient(){
+object ARetrofit : BaseRetrofitClient() {
 
 
     private val buffer = Buffer()
@@ -25,18 +25,48 @@ object ARetrofit : BaseRetrofitClient(){
                 val t1 = System.nanoTime()
                 buffer.clear()
                 request.body?.writeTo(buffer)
-                i(" =============================Request=======================" +
-                        String.format(" \n %s to %s%n%s Body = %s", request.url, it.connection(), request.headers, formatJson(buffer.readUtf8())))
+                i(
+                    " =============================Request=======================" +
+                            String.format(
+                                " \n %s to %s%n%s Body = %s",
+                                request.url,
+                                it.connection(),
+                                request.headers,
+                                formatJson(buffer.readUtf8())
+                            )
+                )
                 val response = it.proceed(request)
                 val t2 = System.nanoTime()
-                i(" =============================Response======================= " +
-                        String.format(" \n from %s spend %.1fms%n%s Body = %s", response.request.url, (t2 - t1) / 1e6, response.headers, response.body?.body2String()))
+                i(
+                    " =============================Response======================= " +
+                            String.format(
+                                " \n from %s spend %.1fms%n%s Body = %s",
+                                response.request.url,
+                                (t2 - t1) / 1e6,
+                                response.headers,
+                                response.body?.body2String()
+                            )
+                )
                 response
             }
         }
+        builder.addInterceptor {
+            val originRequest = it.request()
+            val requestBuilder = originRequest.newBuilder()
+            val urlBuilder = originRequest.url.newBuilder()
+            when (originRequest.method) {
+                RequestMethod.GET -> {
+
+                }
+                RequestMethod.POST -> {
+
+                }
+            }
+
+
+            it.proceed(originRequest)
+        }
     }
 
-    override fun builderRetrofit(builder: Retrofit.Builder) {
-
-    }
+    override fun builderRetrofit(builder: Retrofit.Builder) {}
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.aos.app.R
 import com.aos.app.databinding.ALoginBinding
+import com.aos.app.ui.base.checkPermissions
 import com.aos.app.toast
 import com.aos.app.ui.MainActivity
 import kotlinx.android.synthetic.main.a_login.*
@@ -19,12 +20,20 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loginViewModel: LoginViewModel
 //    private val loginViewModel  by viewModels<LoginViewModel> { LoginViewModelFactory() }
 
+    private lateinit var dataBinding: ALoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DataBindingUtil.setContentView<ALoginBinding>(this, R.layout.a_login)
-        loginViewModel =
-            ViewModelProvider(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
+        checkPermissions({
+            toast("全部授权")
+        },{
+            toast("未授权权限: " + it?.toMutableSet().toString())
+        })
+
+        loginViewModel = ViewModelProvider(this, LoginViewModelFactory()).get(LoginViewModel::class.java)
+        dataBinding = DataBindingUtil.setContentView<ALoginBinding>(this, R.layout.a_login)
+        dataBinding.lifecycleOwner = this
+//        dataBinding.vm = loginViewModel
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
@@ -71,19 +80,24 @@ class LoginActivity : AppCompatActivity() {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
-                        )
+//                        loginViewModel.login(username.text.toString(), password.text.toString())
+                        loginViewModel.loginMK(username.text.toString(), password.text.toString())
                 }
                 false
             }
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+//                loginViewModel.login(username.text.toString(), password.text.toString())
+                loginViewModel.loginMK(username.text.toString(), password.text.toString())
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        //google建议解决内存泄漏
+        finishAfterTransition()
     }
 
 }

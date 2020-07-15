@@ -169,7 +169,7 @@ private fun addIndentBlank(sb: StringBuilder, indent: Int) {
 fun ResponseBody.body2String() : String {
     val source = source()
     source.request(java.lang.Long.MAX_VALUE)
-    return formatJson(source.buffer().clone().readUtf8())
+    return formatJson(source.buffer.clone().readUtf8())
 }
 
 
