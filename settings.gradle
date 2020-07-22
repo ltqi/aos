@@ -1,5 +1,5 @@
-include ':libm'
 include ':app2'
 include ':app'
-include ':liba'
+include ':lifecoroutines'
+include ':okretrofit'
 println("settings==============================")
