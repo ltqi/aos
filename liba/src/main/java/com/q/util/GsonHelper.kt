@@ -1,4 +1,4 @@
-package com.aos.app.net.mk
+package com.q.util
 
 import com.google.gson.Gson
 import com.google.gson.JsonParser

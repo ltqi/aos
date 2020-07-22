@@ -6,15 +6,18 @@ import com.aos.app.ut.saveRefreshToken
 import com.aos.app.ut.saveSessionInfo
 import com.q.lib.BuildConfig
 import com.q.net.BaseRetrofitClient
-import com.q.net.RequestMethod
-import com.q.net.okhttp.MFormBody
+import com.q.net.InjectCommonParamsInterceptor
+import com.q.net.injectParams
+import com.q.net.newBuilder
+import com.q.util.GsonHelper
 import com.q.util.body2String
 import com.q.util.formatJson
 import com.q.util.i
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
 import okio.Buffer
 import retrofit2.Retrofit
-import java.util.HashMap
 
 
 /**
@@ -28,7 +31,11 @@ object MRetrofit : BaseRetrofitClient() {
 
     private val buffer = Buffer()
     override fun builderOkHttpClient(builder: OkHttpClient.Builder) {
-        builder.addInterceptor(InjectCommonParamsInterceptor())
+        builder.addInterceptor(
+            InjectCommonParamsInterceptor(
+                CommonRequestParams.commonParams
+            )
+        )
         if (BuildConfig.DEBUG) {
             builder.addInterceptor {
                 val request = it.request()
@@ -60,41 +67,50 @@ class AccessTokenRefreshInterceptor : Interceptor {
 
         val response = chain.proceed(originRequest)
         if (response.isSuccessful) {
-            val result = GsonHelper.fromJson<MKResult<String?>>(response.body?.body2String(), GsonHelper.findType(
-                MKResult::class.java, String::class.java))
-            when(result?.code){
+            val result = GsonHelper.fromJson<MKResult<String?>>(
+                response.body?.body2String(), GsonHelper.findType(
+                    MKResult::class.java, String::class.java
+                )
+            )
+            when (result?.code) {
                 ServerCode.SESSION_TOKEN_INVALID -> {
                     synchronized(MRetrofit.refreshTokenLock) {
-                        val sessionTokenResult = MRetrofit.getApiService<ApiMKService>().refreshSessionToken()
+                        val sessionTokenResult =
+                            MRetrofit.getApiService<ApiMKService>().refreshSessionToken()
                         val sessionToken = sessionTokenResult.data?.sessionToken
-                        return if(sessionTokenResult.isSuccess && sessionToken != null){
+                        return if (sessionTokenResult.isSuccess && sessionToken != null) {
                             App.sp.saveSessionInfo(sessionToken)
-                            val requestBuilder = originRequest.newBuilder().injectParams(originRequest)
+                            val requestBuilder = originRequest.newBuilder()
+                                .injectParams(originRequest, CommonRequestParams.commonParams)
                             chain.proceed(requestBuilder.build())
                         } else {
-                            Response.Builder().newBuilder(response).message("获取sessionToken失败").build()
+                            Response.Builder().newBuilder(response).message("获取sessionToken失败")
+                                .build()
                         }
                     }
                 }
                 ServerCode.ACCESS_TOKEN_INVALID -> {
                     synchronized(MRetrofit.refreshTokenLock) {
-                        val accessTokenResult = MRetrofit.getApiService<ApiMKService>().refreshAccessToken()
+                        val accessTokenResult =
+                            MRetrofit.getApiService<ApiMKService>().refreshAccessToken()
                         val accessToken = accessTokenResult.accessToken
                         val refreshToken = accessTokenResult.refreshToken
-                        return if(accessTokenResult.isSuccess && accessToken != null && refreshToken != null){
+                        return if (accessTokenResult.isSuccess && accessToken != null && refreshToken != null) {
                             App.sp.saveAccessToken(accessToken)
                             App.sp.saveRefreshToken(refreshToken)
-                            val requestBuilder = originRequest.newBuilder().injectParams(originRequest)
+                            val requestBuilder = originRequest.newBuilder()
+                                .injectParams(originRequest, CommonRequestParams.commonParams)
                             chain.proceed(requestBuilder.build())
                         } else {
-                            Response.Builder().newBuilder(response).message("获取accessToken失败").build()
+                            Response.Builder().newBuilder(response).message("获取accessToken失败")
+                                .build()
                         }
                     }
                 }
-                ServerCode.REFRESH_TOKEN_INVALID-> {
+                ServerCode.REFRESH_TOKEN_INVALID -> {
                     return Response.Builder().newBuilder(response).message("token已失效，请重新登录").build()
                 }
-                ServerCode.REQUEST_TIME_OUT ->{
+                ServerCode.REQUEST_TIME_OUT -> {
                     return Response.Builder().newBuilder(response).message("请求超时").build()
                 }
             }
@@ -103,106 +119,4 @@ class AccessTokenRefreshInterceptor : Interceptor {
         return response
     }
 
-}
-
-class InjectCommonParamsInterceptor : Interceptor {
-
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val originRequest = chain.request()
-        val requestBuilder = originRequest.newBuilder().injectParams(originRequest)
-        return chain.proceed(requestBuilder.build())
-    }
-}
-
-fun Request.Builder.injectParams(originRequest: Request) : Request.Builder {
-
-    val urlBuilder = originRequest.url.newBuilder()
-    val commonParams = CommonRequestParams.commonParams
-    when (originRequest.method) {
-        RequestMethod.GET -> {
-            val iterator = commonParams.iterator()
-            while (iterator.hasNext()) {
-                val next = iterator.next()
-                urlBuilder.addQueryParameter(next.key, next.value)
-            }
-            url(urlBuilder.build())
-        }
-        RequestMethod.POST -> {
-            when (val requestBody = originRequest.body) {
-                is MFormBody -> {
-                    addCommonParams(requestBody, commonParams)
-                }
-                is FormBody -> {
-                    addCommonParams(requestBody, commonParams)
-                }
-                is MultipartBody -> {
-                    val partBodyList = requestBody.parts
-                    val bodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
-                    partBodyList.forEach {
-                        bodyBuilder.addPart(it)
-                    }
-                    commonParams.forEach {
-                        bodyBuilder.addFormDataPart(it.key, it.value)
-                    }
-                    post(bodyBuilder.build())
-                }
-            }
-
-        }
-    }
-    return this
-}
-
-private fun Request.Builder.addCommonParams(
-    requestBody: MFormBody,
-    commonParams: HashMap<String, String>
-) {
-    val bodyBuilder = MFormBody.Builder()
-    for (i in 0 until requestBody.size) {
-        bodyBuilder.add(
-            requestBody.name(i),
-            requestBody.value(i)
-        )
-    }
-    val iterator = commonParams.iterator()
-    while (iterator.hasNext()) {
-        val next = iterator.next()
-        bodyBuilder.add(next.key, next.value)
-    }
-    post(bodyBuilder.build())
-}
-
-private fun Request.Builder.addCommonParams(
-    requestBody: FormBody,
-    commonParams: HashMap<String, String>
-) {
-    val bodyBuilder = MFormBody.Builder()
-    for (i in 0 until requestBody.size) {
-        bodyBuilder.add(
-            requestBody.name(i),
-            requestBody.value(i)
-        )
-    }
-    val iterator = commonParams.iterator()
-    while (iterator.hasNext()) {
-        val next = iterator.next()
-        bodyBuilder.add(next.key, next.value)
-    }
-    post(bodyBuilder.build())
-}
-
-fun Response.Builder.newBuilder(response: Response) : Response.Builder {
-    request(response.request)
-    protocol(response.protocol)
-    code(response.code)
-    message(response.message)
-    handshake(response.handshake)
-    headers(response.headers)
-    body(response.body)
-    networkResponse(response.networkResponse)
-    cacheResponse(response.cacheResponse)
-    priorResponse(response.priorResponse)
-    sentRequestAtMillis(response.sentRequestAtMillis)
-    receivedResponseAtMillis(response.receivedResponseAtMillis)
-    return this
 }
