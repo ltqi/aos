@@ -1,7 +1,6 @@
 package com.q.net
 
 import com.q.lib.BuildConfig
-import com.q.net.okhttp.percentDecode
 import com.q.util.body2String
 import com.q.util.formatJson
 import com.q.util.i
@@ -52,18 +51,16 @@ object ARetrofit : BaseRetrofitClient() {
         }
         builder.addInterceptor {
             val originRequest = it.request()
-            val requestBuilder = originRequest.newBuilder()
-            val urlBuilder = originRequest.url.newBuilder()
-            when (originRequest.method) {
-                RequestMethod.GET -> {
-
-                }
-                RequestMethod.POST -> {
-
-                }
-            }
-
-
+//            val requestBuilder = originRequest.newBuilder()
+//            val urlBuilder = originRequest.url.newBuilder()
+//            when (originRequest.method) {
+//                RequestMethod.GET -> {
+//
+//                }
+//                RequestMethod.POST -> {
+//
+//                }
+//            }
             it.proceed(originRequest)
         }
     }
