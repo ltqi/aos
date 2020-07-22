@@ -1,7 +1,7 @@
 include ':libm'
 include ':app2'//include ':app2'
 include ':app'
-rootProject.name='appmvvm'
+rootProject.name='qq'
 //include ':liba'
 include ':liba'
 println("settings==============================")
