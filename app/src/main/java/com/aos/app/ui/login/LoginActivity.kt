@@ -15,6 +15,9 @@ import com.aos.app.toast
 import com.aos.app.ui.MainActivity
 import kotlinx.android.synthetic.main.a_login.*
 
+/**
+ * wanandroid https://juejin.im/post/5cb473e66fb9a068af37a6ce
+ */
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel

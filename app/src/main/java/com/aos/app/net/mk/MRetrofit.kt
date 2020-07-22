@@ -44,57 +44,64 @@ object MRetrofit : BaseRetrofitClient() {
                 response
             }
         }
-        builder.addInterceptor {
-            val originRequest = it.request()
-
-            val response = it.proceed(originRequest)
-            if (response.isSuccessful) {
-                val result = GsonHelper.fromJson<MKResult<String?>>(response.body?.body2String(), GsonHelper.findType(
-                    MKResult::class.java, String::class.java))
-                when(result?.code){
-                    ServerCode.SESSION_TOKEN_INVALID -> {
-                        synchronized(refreshTokenLock) {
-                            val sessionTokenResult = MRetrofit.getApiService<ApiMKService>().refreshSessionToken()
-                            val sessionToken = sessionTokenResult.data?.sessionToken
-                            if(sessionTokenResult.isSuccess && sessionToken != null){
-                                App.sp.saveSessionInfo(sessionToken)
-                                val requestBuilder = originRequest.newBuilder().injectParams(originRequest)
-                                return@addInterceptor it.proceed(requestBuilder.build())
-                            } else {
-                                return@addInterceptor Response.Builder().newBuilder(response).message("获取sessionToken失败").build()
-                            }
-                        }
-                    }
-                    ServerCode.ACCESS_TOKEN_INVALID -> {
-                        synchronized(refreshTokenLock) {
-                            val accessTokenResult = MRetrofit.getApiService<ApiMKService>().refreshAccessToken()
-                            val accessToken = accessTokenResult.accessToken
-                            val refreshToken = accessTokenResult.refreshToken
-                            if(accessTokenResult.isSuccess && accessToken != null && refreshToken != null){
-                                App.sp.saveAccessToken(accessToken)
-                                App.sp.saveRefreshToken(refreshToken)
-                                val requestBuilder = originRequest.newBuilder().injectParams(originRequest)
-                                return@addInterceptor it.proceed(requestBuilder.build())
-                            } else {
-                                return@addInterceptor  Response.Builder().newBuilder(response).message("获取accessToken失败").build()
-                            }
-                        }
-                    }
-                    ServerCode.REFRESH_TOKEN_INVALID-> {
-                        return@addInterceptor Response.Builder().newBuilder(response).message("token已失效，请重新登录").build()
-                    }
-                    ServerCode.REQUEST_TIME_OUT ->{
-                        return@addInterceptor Response.Builder().newBuilder(response).message("请求超时").build()
-                    }
-                }
-            }
-
-            response
-        }
+        builder.addInterceptor(AccessTokenRefreshInterceptor())
     }
 
     override fun builderRetrofit(builder: Retrofit.Builder) {}
 
+
+}
+
+class AccessTokenRefreshInterceptor : Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): Response {
+
+        val originRequest = chain.request()
+
+        val response = chain.proceed(originRequest)
+        if (response.isSuccessful) {
+            val result = GsonHelper.fromJson<MKResult<String?>>(response.body?.body2String(), GsonHelper.findType(
+                MKResult::class.java, String::class.java))
+            when(result?.code){
+                ServerCode.SESSION_TOKEN_INVALID -> {
+                    synchronized(MRetrofit.refreshTokenLock) {
+                        val sessionTokenResult = MRetrofit.getApiService<ApiMKService>().refreshSessionToken()
+                        val sessionToken = sessionTokenResult.data?.sessionToken
+                        return if(sessionTokenResult.isSuccess && sessionToken != null){
+                            App.sp.saveSessionInfo(sessionToken)
+                            val requestBuilder = originRequest.newBuilder().injectParams(originRequest)
+                            chain.proceed(requestBuilder.build())
+                        } else {
+                            Response.Builder().newBuilder(response).message("获取sessionToken失败").build()
+                        }
+                    }
+                }
+                ServerCode.ACCESS_TOKEN_INVALID -> {
+                    synchronized(MRetrofit.refreshTokenLock) {
+                        val accessTokenResult = MRetrofit.getApiService<ApiMKService>().refreshAccessToken()
+                        val accessToken = accessTokenResult.accessToken
+                        val refreshToken = accessTokenResult.refreshToken
+                        return if(accessTokenResult.isSuccess && accessToken != null && refreshToken != null){
+                            App.sp.saveAccessToken(accessToken)
+                            App.sp.saveRefreshToken(refreshToken)
+                            val requestBuilder = originRequest.newBuilder().injectParams(originRequest)
+                            chain.proceed(requestBuilder.build())
+                        } else {
+                            Response.Builder().newBuilder(response).message("获取accessToken失败").build()
+                        }
+                    }
+                }
+                ServerCode.REFRESH_TOKEN_INVALID-> {
+                    return Response.Builder().newBuilder(response).message("token已失效，请重新登录").build()
+                }
+                ServerCode.REQUEST_TIME_OUT ->{
+                    return Response.Builder().newBuilder(response).message("请求超时").build()
+                }
+            }
+        }
+
+        return response
+    }
 
 }
 
