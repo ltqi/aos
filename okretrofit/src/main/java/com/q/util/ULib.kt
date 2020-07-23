@@ -176,7 +176,7 @@ fun ResponseBody.body2String() : String {
 //Log-----------------------------------------------------------------------
 
 fun i(msg: String?) {
-    i("OKTGS", msg)
+    i("MK", msg)
 }
 
 fun i(tag: String?, msgs: String?) {

@@ -58,7 +58,7 @@ data class UserData(
         var userExtraInfo: UserExtraInfo?
     ) {
         data class UserExtraInfo(
-            var area: String?, // 湖北-襄阳市-老河口市
+            var area: String?, // 湖北-襄阳市
             var bizCode: String?, // mokuaitv
             var deleteMark: Int?, // 0
             var deleteTimestamp: Int?, // 0
