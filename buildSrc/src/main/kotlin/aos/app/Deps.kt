@@ -40,7 +40,7 @@ object Versions {
     const val navigation = "2.2.2"
     const val recyclerView = "1.1.0"
     const val viewmodel_ktx = "2.2.0"
-    const val lifecycle_extension = "2.2.0"
+//    const val lifecycle_extension = "2.2.0"
 }
 
 object Deps {
@@ -57,7 +57,7 @@ object Deps {
     const val navigation_ui_ktx = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
     const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerView}"
     const val viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.viewmodel_ktx}"
-    const val lifecycle_extension = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle_extension}"
+//    const val lifecycle_extension = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle_extension}"
 
     // kotlin
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.kotlin}"

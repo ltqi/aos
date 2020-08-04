@@ -1,11 +1,10 @@
 package com.aos.app.arch
 
-import android.app.Application
 import android.view.View
 import androidx.lifecycle.*
-import com.aos.app.ui.base.BaseViewModel
+import com.aos.app.ui.base.AppViewModel
 
-class LiveDataFragViewModel : BaseViewModel() {
+class LiveDataFragViewModel : AppViewModel() {
 
     val postalCode1 = liveData<String> {
 //        getPostalCode1("1") // no suspend

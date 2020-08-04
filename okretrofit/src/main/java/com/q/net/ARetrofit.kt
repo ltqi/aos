@@ -1,6 +1,6 @@
 package com.q.net
 
-import com.q.lib.BuildConfig
+import com.q.BuildConfig
 import com.q.util.body2String
 import com.q.util.formatJson
 import com.q.util.i

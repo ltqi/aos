@@ -1,12 +1,11 @@
 package com.aos.app.ui.coroutines
 
-import android.app.Application
 import android.view.View
 import androidx.lifecycle.*
-import com.aos.app.ui.base.BaseViewModel
+import com.aos.app.ui.base.AppViewModel
 import kotlinx.coroutines.*
 
-class CoroutinesFragViewModel : BaseViewModel() {
+class CoroutinesFragViewModel : AppViewModel() {
 
 //    val noteDeferred = CompletableDeferred<Book>()
 

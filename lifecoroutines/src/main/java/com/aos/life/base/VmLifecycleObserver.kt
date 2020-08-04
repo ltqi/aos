@@ -1,4 +1,4 @@
-package com.aos.app.ui.main
+package com.aos.life.base
 
 import android.content.Intent
 import androidx.lifecycle.Lifecycle

@@ -1,15 +1,22 @@
-package com.aos.app.ui.base
+package com.aos.life.base
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.MainThread
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
-import com.aos.app.ui.main.VmLifecycleObserver
+import com.aos.life.model.bean.CResult
+import com.aos.life.model.bean.checkResult
+import com.aos.life.model.bean.checkRet
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 open class BaseViewModel : ViewModel(), VmLifecycleObserver {
 
@@ -45,8 +52,6 @@ open class BaseViewModel : ViewModel(), VmLifecycleObserver {
         }
         activity.value?.lifecycleScope?.launchWhenCreated { }
         loge(owner, "onCreate")
-//        viewModelScope.launch {  }
-//        activity.value?.viewModelStore?.get
 
     }
 
@@ -118,5 +123,39 @@ open class BaseViewModel : ViewModel(), VmLifecycleObserver {
                 showLoading.value = false
             }
         }
+
+
+    fun <T : Any, R : CResult<T>> launch(
+        context: CoroutineContext = EmptyCoroutineContext,
+        isShowLoading: Boolean = true,
+        block: suspend CoroutineScope.() -> R,
+        resultFail: ((R) -> Unit)? = null,
+        result: (CResult.Success<T>) -> Unit
+    ) = viewModelScope.launch(context) {
+        try {
+            if (isShowLoading) showLoading.value = true
+            val retV = withContext(Dispatchers.IO) {
+                block()
+            }
+            retV.checkRet(onSuccess = {
+                result(it)
+            }, onError = {
+                it?.also { Toast.makeText(activity.value, it, Toast.LENGTH_SHORT).show() }
+            })
+//            if (retV is CResult.Success) {
+//
+//            } else {
+//                if (resultFail != null) {
+//                    resultFail?.invoke(retV)
+//                } else {
+//                    retV.msg?.also { Toast.makeText(activity.value, it, Toast.LENGTH_SHORT).show() }
+//                }
+//            }
+            showLoading.value = false
+        } catch (e: Exception) {
+            showLoading.value = false
+        }
+
+    }
 }
 

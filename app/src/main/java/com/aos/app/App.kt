@@ -7,12 +7,10 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import com.aos.app.ui.base.BaseViewModel
+import com.aos.app.ui.base.AppViewModel
 import com.aos.app.ui.base.MvvmActivity
 import com.aos.app.ui.base.MvvmFragment
 
@@ -38,12 +36,12 @@ class App : Application() {
 /**
  * 可存储全局需求的数据
  */
-class AppViewModel(application: Application) : AndroidViewModel(application) {
+class GlobalViewModel(application: Application) : AndroidViewModel(application) {
 
 }
 
-fun <VM : BaseViewModel> Class<VM>.getVm(activity: MvvmActivity<ViewDataBinding>) = activity[this]
-fun <VM : BaseViewModel> Class<VM>.getVm(fragment: MvvmFragment<ViewDataBinding>) = fragment[this]
+fun <VM : AppViewModel> Class<VM>.getVm(activity: MvvmActivity<ViewDataBinding>) = activity[this]
+fun <VM : AppViewModel> Class<VM>.getVm(fragment: MvvmFragment<ViewDataBinding>) = fragment[this]
 
 val mainHandler: android.os.Handler = android.os.Handler(Looper.getMainLooper())
 
@@ -67,7 +65,7 @@ fun Fragment.loge(any: Any? = null, msg: String) {
     Log.e(any?.javaClass?.simpleName ?: "AppMvvm", msg)
 }
 
-fun BaseViewModel.loge(any: Any? = null, msg: String) {
+fun AppViewModel.loge(any: Any? = null, msg: String) {
     Log.e(any?.javaClass?.simpleName ?: "AppMvvm", msg)
 }
 

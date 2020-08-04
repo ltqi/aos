@@ -54,18 +54,18 @@ abstract class MvvmFragment<VB : ViewDataBinding> : Fragment()/*, HasDefaultView
      * reified 修饰的泛型，可避免传Class, 类似xx::class.java
      */
     @MainThread
-    inline fun <reified VM : BaseViewModel> get() = viewModelProvider.get<VM>()
+    inline fun <reified VM : AppViewModel> get() = viewModelProvider.get<VM>()
 
     /**使用
      * 带操作符，需至少有一个参数
      */
     @MainThread
-    operator fun <VM : BaseViewModel> get(@NonNull modelClass: Class<VM>): VM {
+    operator fun <VM : AppViewModel> get(@NonNull modelClass: Class<VM>): VM {
         return viewModelProvider[modelClass]
 //        return viewModelProvider.get(modelClass)
     }
 
-    inline fun <reified VM : BaseViewModel> initViewModel(variableId: Int): VM {
+    inline fun <reified VM : AppViewModel> initViewModel(variableId: Int): VM {
         if (!isVDBInit()) {
             throw Exception("未使用MVVM")
         }

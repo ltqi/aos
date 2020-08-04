@@ -4,7 +4,6 @@ import com.aos.app.dto.AResponse
 import com.aos.app.net.ApiAuthService
 import com.aos.app.net.mk.ApiMKService
 import com.aos.app.net.mk.MKResult
-import com.aos.app.net.mk.UserData
 import com.aos.app.net.mk.MRetrofit
 import com.aos.app.ui.login.data.model.UserInfo
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +35,7 @@ class LoginRepository(private val authService: ApiAuthService) {
 //    val apiMKService by lazy { ARetrofit.getApiService<ApiMKService>(ApiMKService.BASE_URL_MK) }
     val apiMKService by lazy { MRetrofit.getApiService<ApiMKService>(
     ApiMKService.BASE_URL_MK) }
-    suspend fun loginMK(account: String, pwd: String) : MKResult<UserData?> {
+    suspend fun loginMK(account: String, pwd: String) : MKResult<com.aos.app.net.mk.MKUserInfo?> {
         return apiMKService.login(mutableMapOf<String, Any?>().apply {
             put("mobile", account)
             put("password", pwd)

@@ -2,6 +2,7 @@ package com.aos.app.ui.main
 
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import com.aos.app.BR

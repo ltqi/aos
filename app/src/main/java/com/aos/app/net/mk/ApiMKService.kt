@@ -18,7 +18,7 @@ interface ApiMKService {
     }
 
     @POST("/ec/b/user/shop/login")
-    suspend fun login(@Body map: Map<String, Any?>): MKResult<UserData?>
+    suspend fun login(@Body map: Map<String, Any?>): MKResult<MKUserInfo?>
 
     @GET("/wdzg/auth/session_token/get")
     fun refreshSessionToken(): MKResult<MKSessionEntity?>
@@ -42,14 +42,14 @@ open class MKResult<T>(
 )
 
 
-data class UserData(
+data class MKUserInfo(
     var user: User?
 ) {
     data class User(
         var accId: String?, // shop50799746
         var bizCode: String?, // mokuaitv
         var id: Int?, // 50799746
-        var imgUrl: String?, // https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLjkTw5bs0KjIiabdwjZXSPGgzP8f8lOialmLoqs2VibgmmzvHtXYGS7OT6DnWSy4L3W5IOWz80P9wRg/132
+        var imgUrl: String?, //
         var mobile: String?, // 15600159691
         var name: String?, // MKO1
         var roleMark: Int?, // 6
@@ -64,7 +64,7 @@ data class UserData(
             var deleteTimestamp: Int?, // 0
             var gmtCreated: String?, // 2019-11-27 13:43:43
             var gmtModified: String?, // 2019-11-27 13:43:43
-            var headImgUrl: String?, // https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLjkTw5bs0KjIiabdwjZXSPGgzP8f8lOialmLoqs2VibgmmzvHtXYGS7OT6DnWSy4L3W5IOWz80P9wRg/132
+            var headImgUrl: String?, //
             var id: Int?, // 101221482
             var lastLoginTime: String?, // 2020-07-14 16:55:07
             var lastRemoteId: String?, // 220.191.163.138

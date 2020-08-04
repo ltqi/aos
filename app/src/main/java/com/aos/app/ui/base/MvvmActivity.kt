@@ -49,7 +49,7 @@ abstract class MvvmActivity<B : ViewDataBinding> : AppCompatActivity() {
 
     abstract fun getLayoutId(): Int
 
-    fun  <VM : BaseViewModel>  addViewModel(variableId: Int, viewModelClazz: Class<VM>): VM? {
+    fun  <VM : AppViewModel>  addViewModel(variableId: Int, viewModelClazz: Class<VM>): VM? {
         if (!this::viewDataBinding.isInitialized)
             return null
         ViewModelProvider(this).apply {
@@ -72,7 +72,7 @@ abstract class MvvmActivity<B : ViewDataBinding> : AppCompatActivity() {
      * 子类若没有使用ViewModel, 调用自然返回null
      */
     @MainThread
-    operator fun <VM : BaseViewModel> get(@NonNull modelClass: Class<VM>): VM {
+    operator fun <VM : AppViewModel> get(@NonNull modelClass: Class<VM>): VM {
         if (!this::viewDataBinding.isInitialized) {
             throw Exception("你正在操作的[" + javaClass.name +"]没有可使用viewModel实现")
         }

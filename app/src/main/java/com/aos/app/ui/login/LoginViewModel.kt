@@ -5,16 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.aos.app.R
-import com.aos.app.net.mk.UserData
+import com.aos.app.net.mk.MKUserInfo
 import com.aos.app.net.mk.doResult
-import com.aos.app.ui.base.BaseViewModel
+import com.aos.app.ui.base.AppViewModel
 import com.aos.app.ui.login.data.LoginRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class LoginViewModel(private val loginRepository: LoginRepository) : BaseViewModel() {
+class LoginViewModel(private val loginRepository: LoginRepository) : AppViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -22,8 +22,8 @@ class LoginViewModel(private val loginRepository: LoginRepository) : BaseViewMod
 //    private val _loginResult = MutableLiveData<LoginUiState<UserInfo?>>()
 //    val loginResult: LiveData<LoginUiState<UserInfo?>> = _loginResult
 
-    private val _loginResult = MutableLiveData<LoginUiState<UserData?>>()
-    val loginResult: LiveData<LoginUiState<UserData?>> = _loginResult
+    private val _loginResult = MutableLiveData<LoginUiState<MKUserInfo?>>()
+    val loginResult: LiveData<LoginUiState<MKUserInfo?>> = _loginResult
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
@@ -87,4 +87,4 @@ class LoginUiState<T>(
     isError: String? = null,
     val enableLoginButton: Boolean = false,
     val needLogin: Boolean = false
-) : BaseViewModel.UiState<T>(isLoading, false, isSuccess, isError)
+) : AppViewModel.UiState<T>(isLoading, false, isSuccess, isError)
