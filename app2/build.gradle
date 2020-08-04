@@ -60,5 +60,7 @@ dependencies {
     implementation Deps.navigation_ui_ktx
 
     implementation Deps.baseRecyclerViewAdapterHelper
+    implementation Deps.verticalTabLayout
+    implementation Deps.flowLayout
 
 }

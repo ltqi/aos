@@ -1,13 +1,7 @@
 package com.aos.app2.ui.dashboard
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.aos.app2.api.HomeRepository
+import com.aos.app2.api.SquareRepository
+import com.aos.app2.ui.home.ListViewModel
 
-class DashboardViewModel : ViewModel() {
-
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
-    }
-    val text: LiveData<String> = _text
-}
+class DashboardViewModel(homeRepository: HomeRepository, squareRepository: SquareRepository) : ListViewModel(homeRepository, squareRepository)

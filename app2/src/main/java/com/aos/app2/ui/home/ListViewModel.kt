@@ -3,11 +3,12 @@ package com.aos.app2.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.aos.app2.api.HomeRepository
+import com.aos.app2.api.SquareRepository
 import com.aos.app2.bean.ArticleList
 import com.aos.life.base.BaseViewModel
 import com.aos.life.model.bean.CResult
 
-class A2HomeViewModel(val homeRepository: HomeRepository) : BaseViewModel() {
+open class ListViewModel(val homeRepository: HomeRepository, private val squareRepository: SquareRepository) : BaseViewModel() {
 
 
     private val _uiState = MutableLiveData<ArticleUiModel>()
@@ -22,14 +23,20 @@ class A2HomeViewModel(val homeRepository: HomeRepository) : BaseViewModel() {
     }
 
     val refreshHome: () -> Unit = { getHomeArticleList(true) }
+    val refreshSquare: () -> Unit = { getSquareArticleList(true)}
 
     fun getHomeArticleList(isRefresh: Boolean = false) = getArticleList(ArticleType.Home, isRefresh)
+    fun getSquareArticleList(isRefresh: Boolean = false) = getArticleList(ArticleType.Square, isRefresh)
 
 
     private fun getArticleList(articleType: ArticleType, isRefresh: Boolean = false, cid: Int = 0) {
         emitArticleUiState(true)
         launch(block = {
-            homeRepository.getArticleList(currentPage)
+            val result = when (articleType) {
+                ArticleType.Home -> homeRepository.getArticleList(currentPage)
+                ArticleType.Square -> squareRepository.getSquareArticleList(currentPage)
+            }
+            result
         }, resultFail = {
             if (it is CResult.Error) {
                 emitArticleUiState(showLoading = false, showError = it.exception.message)

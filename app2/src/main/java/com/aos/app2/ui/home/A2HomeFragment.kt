@@ -11,13 +11,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class A2HomeFragment : App2Fragment<App2FragmentHomeBinding>(R.layout.app2_fragment_home) {
 
-    private val vModel: A2HomeViewModel by viewModel()
+    private val vModel: ListViewModel by viewModel()
 //    private val vModel: HomeViewModel = getVM()
 
     private val homeArticleAdapter by lazy { HomeArticleAdapter() }
 
     override fun startObserve() {
-        getVM<A2HomeViewModel>()
+        getVM<ListViewModel>()
         vModel.uiState.observe(viewLifecycleOwner, Observer {
             it.showSuccess?.let { list ->
                 homeArticleAdapter.run {

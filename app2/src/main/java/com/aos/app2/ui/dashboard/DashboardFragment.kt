@@ -1,28 +1,77 @@
 package com.aos.app2.ui.dashboard
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.aos.app2.BR
 import com.aos.app2.R
+import com.aos.app2.base.App2Fragment
+import com.aos.app2.base.BaseBindAdapter
+import com.aos.app2.bean.Article
+import com.aos.app2.databinding.FragmentDashboardBinding
+import com.aos.app2.toast
+import com.aos.app2.view.CustomLoadMoreView
+import kotlinx.android.synthetic.main.app2_fragment_home.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DashboardFragment : Fragment() {
+class DashboardFragment : App2Fragment<FragmentDashboardBinding>(R.layout.fragment_dashboard) {
 
-    private val dashboardViewModel: DashboardViewModel by viewModels()
+    private val vModel: DashboardViewModel by viewModel()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
-        val textView: TextView = root.findViewById(R.id.text_dashboard)
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+    private val squareAdapter by lazy {
+        BaseBindAdapter<Article>(
+            R.layout.item_square_constraint,
+            BR.article
+        )
+    }
+
+    override fun startObserve() {
+        getVM<DashboardViewModel>()
+        vModel.uiState.observe(viewLifecycleOwner, Observer {
+            it.showSuccess?.let { list ->
+                squareAdapter.run {
+                    squareAdapter.setEnableLoadMore(false)
+                    if (it.isRefresh) replaceData(list.datas)
+                    else addData(list.datas)
+                    setEnableLoadMore(true)
+                    loadMoreComplete()
+                }
+            }
+
+            if (it.showEnd) squareAdapter.loadMoreEnd()
+
+            it.showError?.let { message ->
+                toast(if (message.isBlank()) "网络异常" else message)
+            }
+
         })
-        return root
+
+    }
+
+    override fun initView() {
+        dataBinding.run {
+            vm = vModel
+            adapter = squareAdapter
+        }
+        initRecycleView()
+
+    }
+
+    private fun initRecycleView() {
+        squareAdapter.run {
+            if (headerLayoutCount > 0) removeAllHeaderView()
+            setLoadMoreView(CustomLoadMoreView())
+            setOnLoadMoreListener({ loadMore() }, homeRecycleView)
+        }
+    }
+
+    private fun loadMore() {
+        vModel.getHomeArticleList(false)
+    }
+
+    override fun initData() {
+        refresh()
+    }
+
+    fun refresh() {
+        vModel.getHomeArticleList(true)
     }
 }

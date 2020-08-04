@@ -6,7 +6,7 @@
     <data>
         <variable
             name="vm"
-            type="com.aos.app2.ui.home.A2HomeViewModel" />
+            type="com.aos.app2.ui.home.ListViewModel" />
         <variable
             name="adapter"
             type="androidx.recyclerview.widget.RecyclerView.Adapter" />

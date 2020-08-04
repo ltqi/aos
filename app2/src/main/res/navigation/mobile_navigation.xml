@@ -12,6 +12,13 @@
         tools:layout="@layout/app2_fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_navigator"
+        android:name="com.aos.app2.ui.navigation.NavigationFragment"
+        android:label="导航"
+        tools:layout="@layout/fragment_navigation" />
+
+
+    <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.aos.app2.ui.dashboard.DashboardFragment"
         android:label="发现"
@@ -21,5 +28,5 @@
         android:id="@+id/navigation_notifications"
         android:name="com.aos.app2.ui.notifications.NotificationsFragment"
         android:label="我的"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_me" />
 </navigation>
