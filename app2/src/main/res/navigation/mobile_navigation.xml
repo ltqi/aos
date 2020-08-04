@@ -9,7 +9,7 @@
         android:id="@+id/navigation_home"
         android:name="com.aos.app2.ui.home.A2HomeFragment"
         android:label="首页"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/app2_fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"

@@ -1,65 +1,72 @@
 package com.aos.app2.ui.home
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.aos.app2.R
 import com.aos.app2.base.App2Fragment
-import com.aos.app2.bean.Navigation
-import com.aos.app2.databinding.FragmentHomeBinding
-import com.aos.app2.ui.home.tab.SectionsPagerAdapter
+import com.aos.app2.databinding.App2FragmentHomeBinding
+import com.aos.app2.toast
+import com.aos.app2.view.CustomLoadMoreView
+import kotlinx.android.synthetic.main.app2_fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class A2HomeFragment : App2Fragment<FragmentHomeBinding>(R.layout.fragment_home) {
+class A2HomeFragment : App2Fragment<App2FragmentHomeBinding>(R.layout.app2_fragment_home) {
 
     private val vModel: A2HomeViewModel by viewModel()
 //    private val vModel: HomeViewModel = getVM()
 
-//    private val titleList = arrayOf("首页", "广场", "最新项目", "体系", "导航")
-//    private val fragmentList = arrayListOf<Fragment>()
-//    private val homeFragment by lazy { HomeFragment() } // 首页
-//    private val squareFragment by lazy { SquareFragment() } // 广场
-//    private val lastedProjectFragment by lazy { ProjectTypeFragment.newInstance(0, true) } // 最新项目
+    private val homeArticleAdapter by lazy { HomeArticleAdapter() }
 
     override fun startObserve() {
         getVM<A2HomeViewModel>()
         vModel.uiState.observe(viewLifecycleOwner, Observer {
-            it?.let { getNavigation(it) }
+            it.showSuccess?.let { list ->
+                homeArticleAdapter.run {
+                    homeArticleAdapter.setEnableLoadMore(false)
+                    if (it.isRefresh) replaceData(list.datas)
+                    else addData(list.datas)
+                    setEnableLoadMore(true)
+                    loadMoreComplete()
+                }
+            }
+
+            if (it.showEnd) homeArticleAdapter.loadMoreEnd()
+
+            it.showError?.let { message ->
+                toast(if (message.isBlank()) "网络异常" else message)
+            }
+
         })
+
     }
 
     override fun initView() {
         dataBinding.run {
             vm = vModel
+            adapter = homeArticleAdapter
         }
+        initRecycleView()
 
-        vModel.pagerAdapter.value = SectionsPagerAdapter(
-            mutableListOf("TAB1","TAB2"),
-//            mutableListOf(),
-            requireActivity().supportFragmentManager
-        )
+    }
 
-        dataBinding.tabs.setupWithViewPager(dataBinding.viewPager)
+    private fun initRecycleView() {
+        homeArticleAdapter.run {
+            if (headerLayoutCount > 0) removeAllHeaderView()
+            setLoadMoreView(CustomLoadMoreView())
+            setOnLoadMoreListener({ loadMore() }, homeRecycleView)
+        }
+    }
 
+    private fun loadMore() {
+        vModel.getHomeArticleList(false)
     }
 
     override fun initData() {
-        vModel.getNavigation()
-
+        refresh()
     }
-    private val navigationList = mutableListOf<Navigation>()
 
-    private fun getNavigation(navigationList: List<Navigation>) {
-        this.navigationList.clear()
-        this.navigationList.addAll(navigationList)
-        val titles = navigationList.map { it.name }.take(3).toMutableList()
-        vModel.pagerAdapter.value = SectionsPagerAdapter(
-            titles,
-            requireActivity().supportFragmentManager
-        )
-
-//        tabLayout.setTabAdapter(tabAdapter)
-//
-//        navigationAdapter.setNewData(navigationList)
+    fun refresh() {
+        vModel.getHomeArticleList(true)
     }
+
 
 }

@@ -1,10 +1,10 @@
 package com.aos.app.net.mk
 
 import com.aos.app.App
+import com.aos.app.BuildConfig
 import com.aos.app.ut.saveAccessToken
 import com.aos.app.ut.saveRefreshToken
 import com.aos.app.ut.saveSessionInfo
-import com.q.lib.BuildConfig
 import com.q.net.BaseRetrofitClient
 import com.q.net.InjectCommonParamsInterceptor
 import com.q.net.injectParams

@@ -2,32 +2,88 @@ package com.aos.app2.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.aos.app2.api.NavigationRepository
+import com.aos.app2.api.HomeRepository
+import com.aos.app2.bean.ArticleList
 import com.aos.life.base.BaseViewModel
-import com.aos.app2.bean.Navigation
-import com.aos.app2.ui.home.tab.SectionsPagerAdapter
 import com.aos.life.model.bean.CResult
 
-class A2HomeViewModel(val repository: NavigationRepository) : BaseViewModel() {
+class A2HomeViewModel(val homeRepository: HomeRepository) : BaseViewModel() {
 
-    private val _uiState = MutableLiveData<List<Navigation>>()
-    val uiState : LiveData<List<Navigation>>
+
+    private val _uiState = MutableLiveData<ArticleUiModel>()
+    val uiState: LiveData<ArticleUiModel>
         get() = _uiState
 
-    val pagerAdapter  = MutableLiveData<SectionsPagerAdapter>()
+    private var currentPage = 0
 
-
-    fun getNavigation() {
-        launch(block = {
-            repository.getNavigation()
-        }, resultFail = {}, result = {
-            _uiState.value = it.data
-        })
-//        launchOnUI {
-//            val result = withContext(Dispatchers.IO) { navigationRepository.getNavigation() }
-//            result.checkSuccess {
-//                _uiState.value = it
-//            }
-//        }
+    sealed class ArticleType {
+        object Home : ArticleType()
+        object Square : ArticleType()
     }
+
+    val refreshHome: () -> Unit = { getHomeArticleList(true) }
+
+    fun getHomeArticleList(isRefresh: Boolean = false) = getArticleList(ArticleType.Home, isRefresh)
+
+
+    private fun getArticleList(articleType: ArticleType, isRefresh: Boolean = false, cid: Int = 0) {
+        emitArticleUiState(true)
+        launch(block = {
+            homeRepository.getArticleList(currentPage)
+        }, resultFail = {
+            if (it is CResult.Error) {
+                emitArticleUiState(showLoading = false, showError = it.exception.message)
+            }
+        }, result = { result ->
+                val articleList = result.data
+                if (articleList.offset >= articleList.total) {
+                    emitArticleUiState(showLoading = false, showEnd = true)
+                    return@launch
+                }
+                currentPage++
+                emitArticleUiState(
+                    showLoading = false,
+                    showSuccess = articleList,
+                    isRefresh = isRefresh
+                )
+        })
+    }
+
+    private fun emitArticleUiState(
+        showLoading: Boolean = false,
+        showError: String? = null,
+        showSuccess: ArticleList? = null,
+        showEnd: Boolean = false,
+        isRefresh: Boolean = false,
+        needLogin: Boolean? = null
+    ) {
+        val uiModel =
+            ArticleUiModel(showLoading, showError, showSuccess, showEnd, isRefresh, needLogin)
+        _uiState.value = uiModel
+    }
+
+    data class ArticleUiModel(
+        val showLoading: Boolean,
+        val showError: String?,
+        val showSuccess: ArticleList?,
+        val showEnd: Boolean, // 加载更多
+        val isRefresh: Boolean, // 刷新
+        val needLogin: Boolean? = null
+    )
+
+
+//    private val _uiState = MutableLiveData<List<Navigation>>()
+//    val uiState : LiveData<List<Navigation>>
+//        get() = _uiState
+//
+////    val pagerAdapter  = MutableLiveData<SectionsPagerAdapter>()
+//
+//
+//    fun getNavigation() {
+//        launch(block = {
+//            repository.getNavigation()
+//        }, resultFail = {}, result = {
+//            _uiState.value = it.data
+//        })
+//    }
 }

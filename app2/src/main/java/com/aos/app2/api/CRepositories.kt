@@ -1,5 +1,7 @@
 package com.aos.app2.api
 
+import com.aos.app2.bean.ArticleList
+import com.aos.app2.bean.Banner
 import com.aos.app2.bean.Navigation
 import com.aos.life.model.api.BaseRepository
 import com.aos.life.model.bean.CResult
@@ -19,4 +21,14 @@ class NavigationRepository : BaseRepository() {
 
     private suspend fun requestNavigation(): CResult<List<Navigation>> =
         executeResponse(CRetrofitClient.service.getNavigation())
+}
+
+class HomeRepository : BaseRepository() {
+
+    suspend fun getArticleList(page: Int): CResult<ArticleList> {
+        return safeApiCall(call = { requestArticleList(page) }, errorMessage = "")
+    }
+
+    private suspend fun requestArticleList(page: Int): CResult<ArticleList> =
+        executeResponse(CRetrofitClient.service.getHomeArticles(page))
 }
