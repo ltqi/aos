@@ -43,14 +43,22 @@ abstract class BaseVMFragment<T : ViewDataBinding>(@LayoutRes var layoutId: Int)
     }
 
     /**
+     *
+     */
+    fun ViewDataBinding.setVM(variable: Int, viewModel: BaseViewModel) {
+        viewModel.initVM()
+        setVariable(variable, viewModel)
+    }
+
+    /**
      * koin注入方式在 TabLayout ViewPager中不能用, 只能使用viewModels<VM>()
      * 异常（Can't access ViewModels from detached fragment）
      */
     inline fun <reified VM : BaseViewModel> getVM() = viewModel<VM>().value.initVM()
 
-    /**
-     * ktx 扩展方法方式获取与 Fragment 或 Activity 一一对应的vm。子类需要手动调用 VM.initVM()
-     */
+//    /**不用koin viewModel 的时候可以用这个 viewModels, 两者相差一个s
+//     * ktx 扩展方法方式获取与 Fragment 或 Activity 一一对应的vm。子类需要手动调用 VM.initVM()
+//     */
     inline fun <reified VM : BaseViewModel> getVMs() : Lazy<VM>  = viewModels()
 
     inline fun <reified VM : BaseViewModel> VM.initVM(): VM {

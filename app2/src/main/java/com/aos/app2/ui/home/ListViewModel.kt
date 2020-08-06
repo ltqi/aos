@@ -15,7 +15,7 @@ open class ListViewModel(val homeRepository: HomeRepository, private val squareR
     val uiState: LiveData<ArticleUiModel>
         get() = _uiState
 
-    private var currentPage = 0
+    private var currentPage = 1
 
     sealed class ArticleType {
         object Home : ArticleType()
@@ -30,6 +30,7 @@ open class ListViewModel(val homeRepository: HomeRepository, private val squareR
 
 
     private fun getArticleList(articleType: ArticleType, isRefresh: Boolean = false, cid: Int = 0) {
+        if (isRefresh) currentPage = 1
         emitArticleUiState(true)
         launch(block = {
             val result = when (articleType) {

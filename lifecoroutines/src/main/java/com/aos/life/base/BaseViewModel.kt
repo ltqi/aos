@@ -142,15 +142,6 @@ open class BaseViewModel : ViewModel(), VmLifecycleObserver {
             }, onError = {
                 it?.also { Toast.makeText(activity.value, it, Toast.LENGTH_SHORT).show() }
             })
-//            if (retV is CResult.Success) {
-//
-//            } else {
-//                if (resultFail != null) {
-//                    resultFail?.invoke(retV)
-//                } else {
-//                    retV.msg?.also { Toast.makeText(activity.value, it, Toast.LENGTH_SHORT).show() }
-//                }
-//            }
             showLoading.value = false
         } catch (e: Exception) {
             showLoading.value = false

@@ -25,6 +25,7 @@ class DashboardFragment : App2Fragment<FragmentDashboardBinding>(R.layout.fragme
 
     override fun startObserve() {
         getVM<DashboardViewModel>()
+        dataBinding.setVM(BR.vm, vModel)
         vModel.uiState.observe(viewLifecycleOwner, Observer {
             it.showSuccess?.let { list ->
                 squareAdapter.run {

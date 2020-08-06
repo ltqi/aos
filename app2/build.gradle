@@ -55,6 +55,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
 
+    implementation 'androidx.databinding:databinding-adapters:4.0.0'
+
     // Navigation
     implementation Deps.navigation_fragment_ktx
     implementation Deps.navigation_ui_ktx

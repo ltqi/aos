@@ -1,6 +1,7 @@
 package com.aos.app2.ui.home
 
 import androidx.lifecycle.Observer
+import com.aos.app2.BR
 import com.aos.app2.R
 import com.aos.app2.base.App2Fragment
 import com.aos.app2.databinding.App2FragmentHomeBinding
@@ -12,12 +13,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class A2HomeFragment : App2Fragment<App2FragmentHomeBinding>(R.layout.app2_fragment_home) {
 
     private val vModel: ListViewModel by viewModel()
-//    private val vModel: HomeViewModel = getVM()
 
     private val homeArticleAdapter by lazy { HomeArticleAdapter() }
 
     override fun startObserve() {
-        getVM<ListViewModel>()
+        dataBinding.setVM(BR.vm, vModel)
         vModel.uiState.observe(viewLifecycleOwner, Observer {
             it.showSuccess?.let { list ->
                 homeArticleAdapter.run {
@@ -41,7 +41,6 @@ class A2HomeFragment : App2Fragment<App2FragmentHomeBinding>(R.layout.app2_fragm
 
     override fun initView() {
         dataBinding.run {
-            vm = vModel
             adapter = homeArticleAdapter
         }
         initRecycleView()

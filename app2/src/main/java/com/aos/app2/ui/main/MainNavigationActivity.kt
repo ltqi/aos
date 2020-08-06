@@ -1,14 +1,16 @@
 package com.aos.app2.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.aos.app2.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+/**
+ * Android-Navigation-BottomNavigationView避免Fragment重复创建
+ * https://blog.csdn.net/m0_46958584/article/details/105430445
+ */
 class MainNavigationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

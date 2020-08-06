@@ -43,7 +43,7 @@ abstract class BaseRetrofitClient {
     inline fun <reified T> getApiService(baseUrl: String = HOST_S): T {
         return Retrofit.Builder()
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create(GSON))
+            .addConverterFactory(GsonConverterFactory.create(/*GSON*/))
 //                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 //                .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
             .baseUrl(baseUrl).apply {
