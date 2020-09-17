@@ -1,11 +1,10 @@
 package com.aos.app2.base
 
-import android.widget.Toast
+import android.util.Log
 import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.lifecycleScope
-import com.aos.app2.toast
 import com.aos.app2.view.ADialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.aos.life.base.BaseVMFragment
 import com.aos.life.model.bean.CResult
 import kotlinx.coroutines.CoroutineScope
@@ -49,12 +48,19 @@ abstract class App2Fragment<T : ViewDataBinding>(@LayoutRes layoutId: Int) :
 
     private val dialogLoading by lazy { ADialogFragment() }
     override fun showLoading() {
-        toast("开始加载数据")
-        dialogLoading.show(requireActivity().supportFragmentManager, "loading")
+//        toast("开始加载数据")
+        requireActivity().apply {
+            dialogLoading.show(supportFragmentManager, "loading")
+            try {
+                supportFragmentManager?.executePendingTransactions()
+            } catch (e: Exception) {
+                Log.e("App2Fragment->", e.localizedMessage)
+            }
+        }
     }
 
     override fun dismissLoading() {
-        toast("加载数据结束")
+//        toast("加载数据结束")
         dialogLoading.dismiss()
     }
 }

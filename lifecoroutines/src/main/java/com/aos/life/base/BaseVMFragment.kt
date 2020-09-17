@@ -12,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-abstract class BaseVMFragment<T : ViewDataBinding>(@LayoutRes var layoutId: Int) :
+abstract class BaseVMFragment<T : ViewDataBinding>(@LayoutRes var layoutId: Int, var brId: Int = 0) :
     Fragment(layoutId) {
 
     lateinit var dataBinding: T
