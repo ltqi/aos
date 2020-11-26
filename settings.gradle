@@ -2,4 +2,4 @@ include ':app2'
 include ':app'
 include ':lifecoroutines'
 include ':okretrofit'
-println("settings==============================")
+println("AppMvvm settings.gradle==============================")
